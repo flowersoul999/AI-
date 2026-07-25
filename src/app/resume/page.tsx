@@ -103,21 +103,7 @@ export default function ResumePage() {
                 </div>
                 <div className="flex-1 max-sm:text-center">
                   <h1 className="font-averia text-linear text-2xl">{personal.name}</h1>
-                  <p className="text-secondary mt-0.5 flex items-center gap-1.5 text-sm max-sm:justify-center">
-                    <Briefcase className="h-3.5 w-3.5" />
-                    {personal.title}
-                  </p>
-                  <p className="text-secondary mt-0.5 flex items-center gap-1.5 text-xs max-sm:justify-center">
-                    <MapPin className="h-3 w-3" />
-                    {personal.location}
-                  </p>
-                  <p className="mt-3 text-xs leading-relaxed">{summary}</p>
                 </div>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {skills.slice(0, 6).map(skill => (
-                  <span key={skill.name} className="bg-card rounded-lg border px-2 py-0.5 text-xs text-secondary">{skill.name}</span>
-                ))}
               </div>
             </motion.div>
 
