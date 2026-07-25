@@ -137,18 +137,28 @@ function parseProjectBlocks(text: string) {
   for (const line of lines) {
     if (line.length < 3) continue
     
-    if (line.match(/^(?:项目名称|项目名|Project|项目)\s*[：:]/i)) {
+    if (line.match(/^(?:项目名称|项目名|项目)\s*[：:]/i)) {
       if (currentProject) entries.push(currentProject)
-      const name = line.replace(/^(?:项目名称|项目名|Project|项目)\s*[：:]/i, '').trim()
+      const name = line.replace(/^(?:项目名称|项目名|项目)\s*[：:]/i, '').trim()
       currentProject = { name, description: '', technologies: [], url: '' }
-    } else if (line.match(/^(?:技术栈|技术|Tech|Tech Stack|Technology)\s*[：:]/i)) {
+    } else if (line.match(/^(?:技术栈|技术)\s*[：:]/i)) {
       if (currentProject) {
-        const techs = line.replace(/^(?:技术栈|技术|Tech|Tech Stack|Technology)\s*[：:]/i, '').trim()
+        const techs = line.replace(/^(?:技术栈|技术)\s*[：:]/i, '').trim()
         currentProject.technologies = techs.split(/[,，、;\s]+/).map(t => t.trim()).filter(Boolean)
       }
-    } else if (line.match(/^(?:描述|简介|Description|Summary)\s*[：:]/i)) {
+    } else if (line.match(/^(?:项目简介|项目介绍|简介|描述|Description)\s*[：:]/i)) {
       if (currentProject) {
-        currentProject.description = line.replace(/^(?:描述|简介|Description|Summary)\s*[：:]/i, '').trim()
+        currentProject.description += (currentProject.description ? '。' : '') + line.replace(/^(?:项目简介|项目介绍|简介|描述|Description)\s*[：:]/i, '').trim()
+      }
+    } else if (line.match(/^(?:个人职责|职责|负责|Responsibility|Role)\s*[：:]/i)) {
+      if (currentProject) {
+        const responsibility = line.replace(/^(?:个人职责|职责|负责|Responsibility|Role)\s*[：:]/i, '').trim()
+        currentProject.description += (currentProject.description ? '。' : '') + '负责：' + responsibility
+      }
+    } else if (line.match(/^(?:技术亮点|亮点|优势|Tech Highlights)\s*[：:]/i)) {
+      if (currentProject) {
+        const highlights = line.replace(/^(?:技术亮点|亮点|优势|Tech Highlights)\s*[：:]/i, '').trim()
+        currentProject.description += (currentProject.description ? '。' : '') + '亮点：' + highlights
       }
     } else if (line.match(/^https?:\/\//i)) {
       if (currentProject) {
@@ -160,19 +170,19 @@ function parseProjectBlocks(text: string) {
       } else {
         currentProject.technologies.push(line)
       }
-    } else {
-      const techMatch = line.match(/[（(]([^）)]+)[）)]/)
-      const name = line.split(/[,，:：]/)[0]?.trim() || line.slice(0, 20)
+    } else if (!/^\d{4}/.test(line) && !line.includes('年') && !line.includes('月')) {
+      const parts = line.split(/[:：]/)
+      const name = parts[0]?.trim() || line.slice(0, 20)
       entries.push({
         name,
-        description: line.slice(name.length).replace(/^[,，:：\s]+/, '').slice(0, 150) || name,
-        technologies: techMatch?.[1]?.split(/[,，、;\s]+/).map(t => t.trim()).filter(Boolean) || [],
+        description: parts.slice(1).join(':').trim().slice(0, 150) || name,
+        technologies: [],
       })
     }
   }
   
   if (currentProject) entries.push(currentProject)
-  return entries.filter(e => e.name)
+  return entries.filter(e => e.name && e.name.length > 2)
 }
 
 function cleanResumeText(text: string): string {
