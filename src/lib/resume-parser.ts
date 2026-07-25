@@ -56,7 +56,7 @@ export function parseResumeText(text: string): Partial<Resume> {
 
   // Projects
   const projSection = extractSection(cleanedText, ['项目经历', 'Projects', '项目', '项目经验'])
-  const projects = projSection ? parseProjectBlocks(projSection) : []
+  const projects = projSection ? parseProjectBlocks(projSection) : parseProjectsFromLines(lines)
 
   return {
     personal: { name, title, email, phone, location, avatar: '' },
@@ -129,20 +129,50 @@ function parseEducationBlocks(text: string) {
 }
 
 function parseProjectBlocks(text: string) {
-  const lines = text.split('\n').map(l => l.replace(/^[-*]\s*/, '').trim()).filter(Boolean)
+  const lines = text.split('\n').map(l => l.replace(/^[-*•]\s*/, '').trim()).filter(Boolean)
   const entries: Array<{ name: string; description: string; technologies: string[]; url?: string }> = []
+  
+  let currentProject: any = null
 
   for (const line of lines) {
     if (line.length < 3) continue
-    const techMatch = line.match(/[（(]([^）)]+)[）)]/)
-    const name = line.split(/[,，:：]/)[0]?.trim() || line.slice(0, 20)
-    entries.push({
-      name,
-      description: line.slice(name.length).replace(/^[,，:：\s]+/, '').slice(0, 100) || name,
-      technologies: techMatch?.[1]?.split(/[,，、]/).map(t => t.trim()).filter(Boolean) || [],
-    })
+    
+    if (line.match(/^(?:项目名称|项目名|Project|项目)\s*[：:]/i)) {
+      if (currentProject) entries.push(currentProject)
+      const name = line.replace(/^(?:项目名称|项目名|Project|项目)\s*[：:]/i, '').trim()
+      currentProject = { name, description: '', technologies: [], url: '' }
+    } else if (line.match(/^(?:技术栈|技术|Tech|Tech Stack|Technology)\s*[：:]/i)) {
+      if (currentProject) {
+        const techs = line.replace(/^(?:技术栈|技术|Tech|Tech Stack|Technology)\s*[：:]/i, '').trim()
+        currentProject.technologies = techs.split(/[,，、;\s]+/).map(t => t.trim()).filter(Boolean)
+      }
+    } else if (line.match(/^(?:描述|简介|Description|Summary)\s*[：:]/i)) {
+      if (currentProject) {
+        currentProject.description = line.replace(/^(?:描述|简介|Description|Summary)\s*[：:]/i, '').trim()
+      }
+    } else if (line.match(/^https?:\/\//i)) {
+      if (currentProject) {
+        currentProject.url = line.trim()
+      }
+    } else if (currentProject) {
+      if (line.length > 10) {
+        currentProject.description += (currentProject.description ? '。' : '') + line
+      } else {
+        currentProject.technologies.push(line)
+      }
+    } else {
+      const techMatch = line.match(/[（(]([^）)]+)[）)]/)
+      const name = line.split(/[,，:：]/)[0]?.trim() || line.slice(0, 20)
+      entries.push({
+        name,
+        description: line.slice(name.length).replace(/^[,，:：\s]+/, '').slice(0, 150) || name,
+        technologies: techMatch?.[1]?.split(/[,，、;\s]+/).map(t => t.trim()).filter(Boolean) || [],
+      })
+    }
   }
-  return entries
+  
+  if (currentProject) entries.push(currentProject)
+  return entries.filter(e => e.name)
 }
 
 function cleanResumeText(text: string): string {
@@ -239,6 +269,42 @@ function parseExperienceFromLines(lines: string[]): Array<{ company: string; pos
   }
   if (current) entries.push(current)
   return entries.filter(e => e.company || e.position)
+}
+
+function parseProjectsFromLines(lines: string[]): Array<{ name: string; description: string; technologies: string[]; url?: string }> {
+  const entries: Array<{ name: string; description: string; technologies: string[]; url?: string }> = []
+  const projectKeywords = ['项目', 'Project', '系统', '平台', '工具', '网站', 'App', '应用']
+  const techKeywords = ['React', 'Vue', 'Node.js', 'Python', 'Java', 'TypeScript', 'JavaScript', 'CSS', 'HTML', 'MySQL', 'MongoDB', 'Docker']
+  
+  let currentProject: any = null
+  
+  for (const line of lines) {
+    const hasProjectKeyword = projectKeywords.some(k => line.includes(k))
+    const hasDate = /\d{4}[\s./-]\d{1,2}/.test(line)
+    const isShort = line.length < 20
+    
+    if (hasProjectKeyword && !hasDate && line.length > 5) {
+      if (currentProject) entries.push(currentProject)
+      const parts = line.split(/[:：]/)
+      currentProject = { 
+        name: parts[0]?.trim() || line, 
+        description: parts.slice(1).join(':').trim() || '', 
+        technologies: [], 
+        url: '' 
+      }
+    } else if (currentProject) {
+      if (/^https?:\/\//i.test(line)) {
+        currentProject.url = line.trim()
+      } else if (techKeywords.some(k => line.toLowerCase().includes(k.toLowerCase())) && isShort) {
+        currentProject.technologies.push(line.trim())
+      } else if (line.length > 10) {
+        currentProject.description += (currentProject.description ? '。' : '') + line.trim()
+      }
+    }
+  }
+  
+  if (currentProject) entries.push(currentProject)
+  return entries.filter(e => e.name && e.name.length > 2)
 }
 
 function parseEducationFromLines(lines: string[]): Array<{ school: string; degree: string; field: string; startDate: string; endDate: string }> {
