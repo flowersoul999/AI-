@@ -105,6 +105,12 @@ export default function ResumePage() {
                   <h1 className="font-averia text-linear text-2xl">{personal.name}</h1>
                 </div>
               </div>
+              <p className="mt-3 text-xs leading-relaxed">{summary}</p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {skills.slice(0, 6).map(skill => (
+                  <span key={skill.name} className="bg-card rounded-lg border px-2 py-0.5 text-xs text-secondary">{skill.name}</span>
+                ))}
+              </div>
             </motion.div>
 
             {/* Timeline */}
