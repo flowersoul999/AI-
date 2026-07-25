@@ -39,7 +39,6 @@ interface TimelineProps {
 export default function Timeline({ experience, education, resumeImage }: TimelineProps) {
   const [showImage, setShowImage] = useState(false)
   const [showLightbox, setShowLightbox] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
 
   const handleToggle = () => {
     if (resumeImage) {
@@ -47,26 +46,11 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
     }
   }
 
-  const handleFullscreen = async () => {
-    const doc = document.documentElement
-    if (!document.fullscreenElement) {
-      await doc.requestFullscreen()
-      setIsFullscreen(true)
-    } else {
-      await document.exitFullscreen()
-      setIsFullscreen(false)
-    }
-  }
-
-  const handleFullscreenChange = () => {
-    setIsFullscreen(!!document.fullscreenElement)
-  }
-
   if (showImage && resumeImage) {
     const isPdf = resumeImage.startsWith('data:application/pdf')
     
     return (
-      <div className="space-y-4" onFullscreenChange={handleFullscreenChange}>
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-base font-semibold">
             <Image className="h-4 w-4 text-brand" />
@@ -74,12 +58,12 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
           </h2>
           <div className="flex items-center gap-2">
             <button
-              onClick={handleFullscreen}
+              onClick={() => setShowLightbox(true)}
               className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-secondary hover:bg-white/40 transition-colors"
-              title={isFullscreen ? "退出全屏" : "全屏查看"}
+              title="放大查看"
             >
               <ZoomIn className="h-3 w-3" />
-              {isFullscreen ? '退出' : '全屏'}
+              放大
             </button>
             <button
               onClick={handleToggle}
@@ -94,7 +78,7 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
         <div 
           className="relative cursor-pointer" 
           onClick={() => setShowLightbox(true)}
-          title="点击查看大图"
+          title="点击放大"
         >
           {isPdf ? (
             <div className="relative w-full h-[500px] overflow-hidden">
@@ -132,13 +116,6 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
               >
                 <X className="h-6 w-6 text-gray-700" />
               </motion.button>
-              <button
-                onClick={(e) => { e.stopPropagation(); handleFullscreen(); }}
-                className="fixed top-4 right-16 z-[10000] p-3 bg-gray-100 hover:bg-gray-200 rounded-full shadow-lg transition-colors"
-                title={isFullscreen ? "退出全屏" : "全屏查看"}
-              >
-                <ZoomIn className="h-6 w-6 text-gray-700" />
-              </button>
               <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
                 {isPdf ? (
                   <embed
