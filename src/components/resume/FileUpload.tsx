@@ -20,9 +20,17 @@ async function parseTextToResume(text: string): Promise<Resume> {
   return response.json() as Promise<Resume>
 }
 
-async function extractPdfText(file: File): Promise<string> {
-  const bytes = await file.arrayBuffer()
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(bytes)))
+async function extractPdfText(file: File): Promise<{ text: string; pdfBase64: string }> {
+  const base64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = reader.result as string
+      resolve(result.split(',')[1])
+    }
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+  
   const response = await fetch("/api/parse-pdf", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -33,7 +41,11 @@ async function extractPdfText(file: File): Promise<string> {
     throw new Error(errData.error || `PDF 解析失败 (${response.status})`)
   }
   const data = await response.json()
-  return data.text
+  return { text: data.text, pdfBase64: data.pdfBase64 || base64 }
+}
+
+async function pdfToImages(base64: string): Promise<string[]> {
+  return [`data:application/pdf;base64,${base64}`]
 }
 
 export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
@@ -58,8 +70,11 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
         const text = await readFileAsText(file)
         resume = await parseTextToResume(text)
       } else if (file.name.match(/\.pdf$/i)) {
-        const text = await extractPdfText(file)
-        resume = await parseTextToResume(text)
+        const { text, pdfBase64 } = await extractPdfText(file)
+        const resumeData = await parseTextToResume(text)
+        
+        const images = await pdfToImages(pdfBase64)
+        resume = { ...resumeData, resumeImage: images[0] }
       } else {
         throw new Error('仅支持 JSON、MD、PDF 格式')
       }

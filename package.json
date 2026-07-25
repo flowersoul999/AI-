@@ -24,7 +24,7 @@
     "marked": "^17.0.0",
     "motion": "^12.23.24",
     "next": "16.0.10",
-    "pdfjs-dist": "^6.1.200",
+    "pdf-parse": "^1.1.1",
     "react": "19.2.1",
     "react-dom": "19.2.0",
     "recharts": "^3.10.0",

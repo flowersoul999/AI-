@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
@@ -100,7 +100,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="card relative min-h-0 flex-1 overflow-y-auto scrollbar-none"        >
-              <Timeline experience={experience} education={education} />
+              <Timeline experience={experience} education={education} resumeImage={resume.resumeImage} />
             </motion.div>
           </div>
 

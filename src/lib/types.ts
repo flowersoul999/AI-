@@ -1,4 +1,4 @@
-﻿export interface PersonalInfo {
+export interface PersonalInfo {
   name: string
   title: string
   email: string
@@ -54,4 +54,5 @@ export interface Resume {
   education: Education[]
   projects: Project[]
   contact: Contact
+  resumeImage?: string
 }
