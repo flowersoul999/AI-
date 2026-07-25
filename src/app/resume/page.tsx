@@ -70,9 +70,36 @@ export default function ResumePage() {
             >
               <div className="flex items-start gap-4 max-sm:flex-col max-sm:items-center">
                 <div className="shrink-0">
-                  <div className="h-[72px] w-[72px] overflow-hidden rounded-full" style={{ boxShadow: '0 16px 32px -5px #E2D9CE' }}>
-                    <img src={personal.avatar} alt={personal.name} className="h-full w-full object-cover" />
+                  <div 
+                    className="h-[72px] w-[72px] overflow-hidden rounded-full cursor-pointer hover:opacity-80 transition-opacity" 
+                    style={{ boxShadow: '0 16px 32px -5px #E2D9CE' }}
+                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                  >
+                    {personal.avatar ? (
+                      <img src={personal.avatar} alt={personal.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-400 text-xs">上传头像</span>
+                      </div>
+                    )}
                   </div>
+                  <input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (event) => {
+                          const avatarData = event.target?.result as string
+                          setResume({ ...resume, personal: { ...personal, avatar: avatarData } })
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                  />
                 </div>
                 <div className="flex-1 max-sm:text-center">
                   <h1 className="font-averia text-linear text-2xl">{personal.name}</h1>
