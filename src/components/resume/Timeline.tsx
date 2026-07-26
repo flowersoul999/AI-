@@ -71,13 +71,12 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
             style={{ maxHeight: 'calc(100vh - 350px)' }}
           >
             {isPdf ? (
-              <div className="w-full h-full">
-                <iframe
+              <div className="w-full h-full" style={{ minHeight: '500px' }}>
+                <embed
                   src={`${resumeImage}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
-                  className="w-full h-full border-0"
-                  style={{ minHeight: '500px' }}
+                  type="application/pdf"
+                  className="w-full h-full border-0 outline-none"
                   title="简历 PDF"
-                  sandbox="allow-scripts allow-forms"
                 />
               </div>
             ) : (
