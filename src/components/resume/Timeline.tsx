@@ -39,7 +39,7 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
       const isPdf = resumeImage.startsWith('data:application/pdf')
       
       return (
-        <div className="h-full flex flex-col" style={{ minHeight: '400px' }}>
+        <div className="h-full flex flex-col" style={{ contain: 'layout style paint' }}>
           <div className="flex items-center justify-between shrink-0 mb-3">
             <h2 className="flex items-center gap-2 text-base font-semibold">
               <Image className="h-4 w-4 text-brand" />
@@ -65,18 +65,18 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
             </div>
           </div>
           <div 
-            className="relative cursor-pointer overflow-hidden bg-white flex-1 min-h-0" 
+            className="relative cursor-pointer overflow-hidden bg-white flex-1" 
             onClick={() => setShowLightbox(true)}
             title="点击放大"
           >
             {isPdf ? (
-              <embed
-                src={`${resumeImage}#toolbar=0&navpanes=0&scrollbar=0&view=FitV&page=1`}
+              <object
+                data={`${resumeImage}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
                 type="application/pdf"
                 className="w-full h-full border-0 outline-none"
                 title="简历 PDF"
-                style={{ minHeight: '100%' }}
-              />
+              >
+              </object>
             ) : (
               <img
                 src={resumeImage}

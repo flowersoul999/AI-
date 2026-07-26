@@ -60,7 +60,8 @@ export default function ResumePage() {
         <div className="grid w-full max-w-[1400px] grid-cols-[1.5fr_3fr_1.5fr] gap-6 max-lg:grid-cols-1">
           
           {/* ===== LEFT COLUMN: Profile + Timeline ===== */}
-          <div className="flex flex-col gap-6 max-lg:order-2" style={{ height: "calc(100vh - 200px)", overflow: "hidden" }}>
+          <div className="max-lg:order-2" style={{ height: "calc(100vh - 200px)" }}>
+            <div className="flex flex-col gap-6 h-full" style={{ overflow: "hidden" }}>
             {/* Profile Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -118,9 +119,10 @@ export default function ResumePage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="card relative min-h-0 flex-1 overflow-y-auto scrollbar-none"        >
+              className="card relative min-h-0 flex-1 overflow-y-auto scrollbar-none">
               <Timeline experience={experience} education={education} resumeImage={resume.resumeImage} />
             </motion.div>
+            </div>
           </div>
 
           {/* ===== MIDDLE COLUMN: AI Chat (Main Focus) ===== */}
