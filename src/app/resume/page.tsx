@@ -57,17 +57,18 @@ export default function ResumePage() {
 
       <div className="flex flex-col items-center px-6 pt-32 pb-12 max-sm:px-3">
         {/* Three-Column Grid */}
-        <div className="grid w-full max-w-[1400px] grid-cols-[1.5fr_3fr_1.5fr] gap-6 max-lg:grid-cols-1">
+        <div className="grid w-full max-w-[1400px] grid-cols-[1.5fr_3fr_1.5fr] gap-6 max-lg:grid-cols-1" style={{ gridAutoRows: '1fr', contain: 'layout' }}>
           
           {/* ===== LEFT COLUMN: Profile + Timeline ===== */}
-          <div className="max-lg:order-2" style={{ height: "calc(100vh - 200px)" }}>
-            <div className="flex flex-col gap-6 h-full" style={{ overflow: "hidden" }}>
+          <div className="max-lg:order-2" style={{ height: "calc(100vh - 200px)", flexShrink: 0 }}>
+            <div className="flex flex-col gap-6 h-full overflow-hidden">
             {/* Profile Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
               className="card relative shrink-0"
+              style={{ flexShrink: 0 }}
             >
               <div className="flex items-start gap-4 max-sm:flex-col max-sm:items-center">
                 <div className="shrink-0">
@@ -119,19 +120,25 @@ export default function ResumePage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="card relative min-h-0 flex-1 overflow-y-auto scrollbar-none">
-              <Timeline experience={experience} education={education} resumeImage={resume.resumeImage} />
+              className="card relative flex-1 overflow-hidden"
+              style={{ flexGrow: 1, minHeight: 0, contain: 'layout style paint' }}
+            >
+              <div className="h-full overflow-y-auto scrollbar-none">
+                <Timeline experience={experience} education={education} resumeImage={resume.resumeImage} />
+              </div>
             </motion.div>
             </div>
           </div>
 
           {/* ===== MIDDLE COLUMN: AI Chat (Main Focus) ===== */}
-          <div className="max-lg:order-1">
-            <ChatInterface ref={chatRef} resume={resume} />
+          <div className="max-lg:order-1" style={{ height: "calc(100vh - 200px)", flexShrink: 0 }}>
+            <div className="h-full" style={{ contain: 'layout style paint' }}>
+              <ChatInterface ref={chatRef} resume={resume} />
+            </div>
           </div>
 
           {/* ===== RIGHT COLUMN: Skill Radar + Quick Questions ===== */}
-          <div className="space-y-6 max-lg:order-3">
+          <div className="space-y-6 max-lg:order-3" style={{ height: "calc(100vh - 200px)", flexShrink: 0, overflowY: 'auto' }}>
             {/* Skill Radar */}
             <SkillRadar skills={skills} />
 
