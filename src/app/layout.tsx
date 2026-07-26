@@ -1,11 +1,11 @@
-﻿import '@/styles/globals.css'
+import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import Layout from '@/layout'
 import Head from '@/layout/head'
 
 export const metadata: Metadata = {
-  title: 'AI 简历助手',
-  description: '基于 AI 的简历问答网站',
+  title: '超级简历',
+  description: 'AI驱动的智能简历助手，帮助你在求职面试中突出自己，让面试官快速了解你的专业能力和项目经验',
 }
 
 const htmlStyle = {
