@@ -39,7 +39,7 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
       const isPdf = resumeImage.startsWith('data:application/pdf')
       
       return (
-        <div className="space-y-4">
+        <div className="space-y-4 h-full overflow-y-auto scrollbar-none">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-base font-semibold">
               <Image className="h-4 w-4 text-brand" />
@@ -82,7 +82,7 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
               <img
                 src={resumeImage}
                 alt="简历图片"
-                className="w-full h-auto"
+                className="w-full h-auto max-h-[calc(100vh-350px)] object-contain"
               />
             )}
           </div>
