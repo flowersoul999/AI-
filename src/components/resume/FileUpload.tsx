@@ -14,7 +14,7 @@ async function parseTextToResume(text: string): Promise<Resume> {
   const response = await fetch('/api/parse', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
+    body: JSON.stringify({ text, useAI: true })
   })
   if (!response.ok) throw new Error('解析失败')
   return response.json() as Promise<Resume>
