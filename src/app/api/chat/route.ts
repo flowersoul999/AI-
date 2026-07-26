@@ -1,4 +1,4 @@
-﻿import { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
 import { promises as fs } from 'fs'
 import path from 'path'
 import { generateResponse } from '@/lib/ai-service'
@@ -7,9 +7,20 @@ import type { Resume } from '@/lib/types'
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, config } = await request.json()
+    const { messages } = await request.json()
     const filePath = path.join(process.cwd(), 'public', 'data', 'resume.json')
     const resumeData = JSON.parse(await fs.readFile(filePath, 'utf-8')) as Resume
+
+    const doubaoApiKey = process.env.DOUBAO_API_KEY || ''
+    const doubaoBaseUrl = process.env.DOUBAO_BASE_URL || ''
+    const doubaoModel = process.env.DOUBAO_MODEL || ''
+
+    const config = {
+      provider: doubaoApiKey ? 'openai' as const : 'mock' as const,
+      apiKey: doubaoApiKey || process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
+      baseUrl: doubaoBaseUrl || process.env.NEXT_PUBLIC_OPENAI_BASE_URL || 'https://api.openai.com/v1',
+      model: doubaoModel || process.env.NEXT_PUBLIC_OPENAI_MODEL || 'gpt-4o-mini'
+    }
 
     const stream = new ReadableStream({
       async start(controller) {
