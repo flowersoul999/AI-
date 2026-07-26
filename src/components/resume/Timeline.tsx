@@ -65,24 +65,27 @@ export default function Timeline({ experience, education, resumeImage }: Timelin
             </div>
           </div>
           <div 
-            className="relative cursor-pointer" 
+            className="relative cursor-pointer flex justify-center overflow-hidden bg-white" 
             onClick={() => setShowLightbox(true)}
             title="点击放大"
+            style={{ maxHeight: 'calc(100vh - 350px)' }}
           >
             {isPdf ? (
-              <div className="relative w-full h-[500px] overflow-hidden">
-                <embed
-                  src={`${resumeImage}#toolbar=0&navpanes=0&scrollbar=0`}
-                  type="application/pdf"
-                  className="w-full h-[600px] -mt-[60px] border-0 outline-none"
+              <div className="w-full h-full">
+                <iframe
+                  src={`${resumeImage}#toolbar=0&navpanes=0&scrollbar=0&view=FitH&page=1`}
+                  className="w-full h-full border-0"
+                  style={{ minHeight: '500px' }}
                   title="简历 PDF"
+                  sandbox="allow-scripts allow-forms"
                 />
               </div>
             ) : (
               <img
                 src={resumeImage}
                 alt="简历图片"
-                className="w-full h-auto max-h-[calc(100vh-350px)] object-contain"
+                className="w-full h-auto object-contain"
+                style={{ maxHeight: 'calc(100vh - 350px)' }}
               />
             )}
           </div>

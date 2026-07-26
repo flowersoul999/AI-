@@ -60,7 +60,7 @@ export default function ResumePage() {
         <div className="grid w-full max-w-[1400px] grid-cols-[1.5fr_3fr_1.5fr] gap-6 max-lg:grid-cols-1">
           
           {/* ===== LEFT COLUMN: Profile + Timeline ===== */}
-          <div className="flex flex-col gap-6 max-lg:order-2">
+          <div className="flex flex-col gap-6 max-lg:order-2" style={{ height: "calc(100vh - 200px)" }}>
             {/* Profile Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
